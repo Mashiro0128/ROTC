@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 st.set_page_config(page_title="連隊回報清查系統")
-st.title("大學儲備軍官訓練團 臺北大學教育中心")
+st.title("大學儲備軍官訓練團\n臺北大學教育中心")
 st.header("準據暨授課通知回報清查系統")
 
 DEFAULT_NAMES = [
