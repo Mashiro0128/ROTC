@@ -2,10 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-st.set_page_config(page_title="連隊回報清查系統", page_icon="🎖️")
-st.title(
-    "ROTC臺北大學教育中心/n準據暨授課通知回報清查系統"
-)
+st.set_page_config(page_title="連隊回報清查系統")
+st.title("ROTC臺北大學教育中心")
+st.header("準據暨授課通知回報清查系統")
 
 DEFAULT_NAMES = [
     "周奕豪","林凱亮","王柏貫","朱楷文","何昀哲","吳宜儒","林青松","黃泓仁","鄭睬蓁","羅于倢",
