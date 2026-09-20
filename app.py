@@ -4,7 +4,7 @@ import numpy as np
 
 st.set_page_config(page_title="連隊回報清查系統", page_icon="🎖️")
 st.title(
-    "ROTC臺北大學教育中心　準據暨授課通知回報清查系統"
+    "ROTC臺北大學教育中心/n準據暨授課通知回報清查系統"
 )
 
 DEFAULT_NAMES = [
