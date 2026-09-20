@@ -3,7 +3,9 @@ import pandas as pd
 import numpy as np
 
 st.set_page_config(page_title="連隊回報清查系統", page_icon="🎖️")
-st.title("🎖️ 連隊回報自動清查系統")
+st.title(
+    "ROTC臺北大學教育中心　準據暨授課通知回報清查系統"
+)
 
 DEFAULT_NAMES = [
     "周奕豪","林凱亮","王柏貫","朱楷文","何昀哲","吳宜儒","林青松","黃泓仁","鄭睬蓁","羅于倢",
@@ -13,7 +15,7 @@ DEFAULT_NAMES = [
     "黃定凱","鍾文璽","林育章","林雨呈","李子均","吳耀宗","許恩睿","辛巧伃","蘇靖雅"
 ]
 
-st.sidebar.header("⚙️ 設定")
+st.sidebar.header("建制名單（115-1: R23-25）")
 members_text = st.sidebar.text_area("建制人員名單", value="\n".join(DEFAULT_NAMES), height=250)
 everybody_names = [n.strip() for n in members_text.split("\n") if n.strip()]
 num_everybody = len(everybody_names)
