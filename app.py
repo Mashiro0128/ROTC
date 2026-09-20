@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 st.set_page_config(page_title="連隊回報清查系統")
-st.title("大學儲備軍官訓練團\n臺北大學教育中心")
+st.title("ROTC 臺北大學教育中心")
 st.header("準據暨授課通知回報清查系統")
 
 DEFAULT_NAMES = [
@@ -43,3 +43,15 @@ if uploaded_file is not None:
 
     st.subheader("❌ 未回報名單")
     st.write("、".join(nonreported))
+#-------------------------文字說明------------------------
+st.sidebar.divider()  # 加一條分隔線
+with st.sidebar.expander("📖 系統使用與維護說明"):
+    st.markdown("""
+    **【日常操作】**
+    1. 匯出 Google 表單為 CSV 檔。
+    2. 上傳至本系統即可自動清查。
+    
+    **【名單維護】**
+    * 若人員有異動，直接在上方文字框修改，一人一行。
+    * 修改後系統會自動更新建制總人數。
+    """)
