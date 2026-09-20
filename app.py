@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 st.set_page_config(page_title="連隊回報清查系統")
-st.title("ROTC臺北大學教育中心")
+st.title("大學儲備軍官訓練團 臺北大學教育中心")
 st.header("準據暨授課通知回報清查系統")
 
 DEFAULT_NAMES = [
@@ -15,7 +15,7 @@ DEFAULT_NAMES = [
 ]
 
 st.sidebar.header("建制名單（115-1: R23-25）")
-members_text = st.sidebar.text_area("建制人員名單", value="\n".join(DEFAULT_NAMES), height=250)
+members_text = st.sidebar.text_area("建制人員名單（請適時修改）", value="\n".join(DEFAULT_NAMES), height=250)
 everybody_names = [n.strip() for n in members_text.split("\n") if n.strip()]
 num_everybody = len(everybody_names)
 
