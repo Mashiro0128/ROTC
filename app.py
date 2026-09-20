@@ -30,7 +30,7 @@ if uploaded_file is not None:
     nonreported = [n for n in everybody_names if n not in list_reported]
     out_of_everybody = [n for n in list_reported if n not in everybody_names]
 
-    st.subheader("📢 回報詞")
+    st.subheader("結果")
     report_text = (
         f"報告值星班長，全連應到人數 {num_everybody} 員，除\n"
         f"未回報 {len(nonreported)} 員、建制外 {len(out_of_everybody)} 員外\n"
@@ -41,7 +41,7 @@ if uploaded_file is not None:
     officer_text = f"報告副主任，學生報備本周日行動準據，未回報人員共 {len(nonreported)} 員，分述如後：{'、'.join(nonreported)}"
     st.code(officer_text)
 
-    st.subheader("❌ 未回報名單")
+    st.subheader("未回報名單")
     st.write("、".join(nonreported))
 #-------------------------文字說明------------------------
 st.sidebar.markdown("""
