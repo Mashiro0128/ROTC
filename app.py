@@ -74,11 +74,6 @@ with st.sidebar.expander("📖 關於搭配表單"):
     """)
 with st.sidebar.expander("📖 聯繫創作者"):
     st.markdown("""
-    **【日常操作】**
-    1. 匯出 Google 表單為 CSV 檔。
-    2. 上傳至本系統即可自動清查。
-    
-    **【名單維護】**
-    * 若人員有異動，直接在上方文字框修改，一人一行。
-    * 修改後系統會自動更新建制總人數。
+    大學儲備軍官訓練團24期　陳耀文\n
+    **【電子郵件】**chaelong239@gmail.com
     """)
