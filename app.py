@@ -74,7 +74,8 @@ with st.sidebar.expander("📖 關於搭配表單"):
     """)
 with st.sidebar.expander("📖 聯繫創作者"):
     st.markdown("""
-    大學儲備軍官訓練團24期\n時任實習班長陳耀文\n
+    大學儲備軍官訓練團24期\n
+    時任實習班長：陳耀文\n
     **【電子郵件】**
     chaelong239@gmail.com
     """)
