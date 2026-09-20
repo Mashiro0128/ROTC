@@ -1,0 +1,135 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+
+# 頁面基本設定
+st.set_page_config(
+    page_title="連隊回報清查系統",
+    page_icon="🎖️",
+    layout="wide"
+)
+
+st.title("🎖️ 連隊回報自動清查與回報詞產生器")
+st.caption("上傳表單 CSV 檔案，自動比對建制名單、統計人數並生成報告詞。")
+
+# 預設建制表 (49員)
+DEFAULT_EVERYBODY = {
+    "name": [
+        "周奕豪","林凱亮","王柏貫","朱楷文","何昀哲","吳宜儒","林青松","黃泓仁","鄭睬蓁","羅于倢",
+        "王思鈞","蔡駿佳","馬德康","張軒昂","林佑愷","林傳逸","楊邵勛","鄭智文","彭康鎰","王鈺凱",
+        "洪靖杰","步長潤","郭鎮寧","江冠逸","陳耀文","洪彥翔","周萬明","王聖捷","郭育丞","張博凱",
+        "胡劭懷","林芯妤","陳佳君","洪筠芯","張惟恩","李吉峰","張人仁","古原嘉","朱俞安","柯冠佑",
+        "黃定凱","鍾文璽","林育章","林雨呈","李子均","吳耀宗","許恩睿","辛巧伃","蘇靖雅"
+    ],
+    "number": [f"{i:02d}" for i in range(1, 50)]
+}
+
+# 側邊欄：名單與設定管理
+st.sidebar.header("⚙️ 建制名單管理")
+st.sidebar.info("若未來人員有異動，接任幹部可直接在下方編輯名單：")
+
+# 讓幹部可以在網頁側邊欄動態修改總名單（每行一人）
+members_text = st.sidebar.text_area(
+    "全連建制人員名單",
+    value="\n".join(DEFAULT_EVERYBODY["name"]),
+    height=300
+)
+everybody_names = [name.strip() for name in members_text.split("\n") if name.strip()]
+num_everybody = len(everybody_names)
+
+st.sidebar.write(f"📊 當前總建制人數：**{num_everybody}** 員")
+
+# 主頁面：檔案上傳區
+st.subheader("1. 上傳表單 CSV")
+uploaded_file = st.file_uploader("請選擇『連回報表單.csv』檔案", type=["csv"])
+
+if uploaded_file is not None:
+    try:
+        # 讀取 CSV
+        df_form = pd.read_csv(uploaded_file)
+        
+        # 選擇姓名欄位（預設自動尋找「姓名（勿錯字）」或「姓名」）
+        default_col_idx = 0
+        for idx, col in enumerate(df_form.columns):
+            if "姓名" in col:
+                default_col_idx = idx
+                break
+                
+        name_column = st.selectbox("請確認『姓名』欄位名稱：", df_form.columns, index=default_col_idx)
+        
+        # 清洗與取出回報名單
+        list_reported = df_form[name_column].dropna().astype(str).str.strip().tolist()
+        
+        # --- 核心邏輯比對 ---
+        reported = []
+        nonreported = []
+        
+        for name in everybody_names:
+            if name in list_reported:
+                reported.append(name)
+            else:
+                nonreported.append(name)
+                
+        # 建制外（可能打錯字或非建制人員）
+        out_of_everybody = [name for name in list_reported if name not in everybody_names]
+        
+        reported_len = len(reported)
+        nonreported_len = len(nonreported)
+        num_out_of_everybody = len(out_of_everybody)
+        
+        st.divider()
+        st.subheader("2. 比對結果與回報詞")
+        
+        # 產生回報詞
+        if reported_len + nonreported_len == num_everybody:
+            report_text = (
+                f"報告值星班長，全連應到人數 {num_everybody} 員，除\n\n"
+                f"未回報 {nonreported_len} 員\n"
+                f"建制外 {num_out_of_everybody} 員外\n\n"
+                f"實到 {reported_len} 員，完畢。"
+            )
+            st.success("✅ 人數比對無誤！")
+        else:
+            report_text = f"⚠️ 人數有異常，清查人數總計為 {reported_len + nonreported_len + num_out_of_everybody} 人。"
+            st.warning(report_text)
+
+        # 顯示回報詞與複製按鈕
+        col_text, col_metrics = st.columns([2, 1])
+        
+        with col_text:
+            st.markdown("**📢 班長回報詞格式：**")
+            st.code(report_text, language="text")
+            
+            nonreported_str = "、".join(nonreported) if nonreported else "無"
+            officer_report_text = f"報告副主任，學生報備本周日行動準據，未回報人員共 {nonreported_len} 員，分述如後：{nonreported_str}"
+            st.markdown("**📢 副主任報告詞格式：**")
+            st.code(officer_report_text, language="text")
+
+        with col_metrics:
+            st.metric("應到人數", f"{num_everybody} 員")
+            st.metric("實到 (已回報)", f"{reported_len} 員")
+            st.metric("未回報", f"{nonreported_len} 員", delta=-nonreported_len, delta_color="inverse")
+            if num_out_of_everybody > 0:
+                st.metric("建制外/打錯字", f"{num_out_of_everybody} 員")
+
+        # --- 顯示詳細對照表 ---
+        st.divider()
+        st.subheader("3. 詳細對照清單")
+        
+        max_len = max(len(reported), len(nonreported), len(out_of_everybody))
+        padded_reported = reported + [np.nan] * (max_len - len(reported))
+        padded_nonreported = nonreported + [np.nan] * (max_len - len(nonreported))
+        padded_out_of_everybody = out_of_everybody + [np.nan] * (max_len - len(out_of_everybody))
+        
+        df_reported = pd.DataFrame({
+            '已回報': padded_reported,
+            '未回報': padded_nonreported,
+            '建制外': padded_out_of_everybody
+        })
+        
+        st.dataframe(df_reported, use_container_width=True)
+        
+    except Exception as e:
+        st.error(f"讀取檔案或比對時發生錯誤：{e}")
+else:
+    st.info("👆 請在上方的框框拖曳上傳『連回報表單.csv』檔案以開始比對。")
