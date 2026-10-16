@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from collections import Counter  # 新增：用於快速統計重複次數
 
 st.set_page_config(page_title="連隊回報清查系統")
 st.title("ROTC 臺北大學教育中心")
@@ -26,9 +27,17 @@ if uploaded_file is not None:
     name_column = st.selectbox("請選擇姓名欄位：", df_form.columns, index=0)
     list_reported = df_form[name_column].dropna().astype(str).str.strip().tolist()
 
-    reported = [n for n in everybody_names if n in list_reported]
-    nonreported = [n for n in everybody_names if n not in list_reported]
-    out_of_everybody = [n for n in list_reported if n not in everybody_names]
+    # 統計填寫次數
+    counts = Counter(list_reported)
+    # 重複填寫名單 (填寫次數 > 1)
+    duplicates = {name: count for name, count in counts.items() if count > 1}
+
+    # 實際有填寫的人員（去除重複後）
+    unique_reported = set(list_reported)
+
+    reported = [n for n in everybody_names if n in unique_reported]
+    nonreported = [n for n in everybody_names if n not in unique_reported]
+    out_of_everybody = [n for n in unique_reported if n not in everybody_names]
 
     st.subheader("結果")
     report_text = (
@@ -42,7 +51,18 @@ if uploaded_file is not None:
     st.code(officer_text)
 
     st.subheader("未回報名單")
-    st.write("、".join(nonreported))
+    st.write("、".join(nonreported) if nonreported else "無（全員已回報）")
+
+    # ------------------ 新增：重複填寫人員顯示區塊 ------------------
+    st.subheader("⚠️ 重複填寫名單")
+    if duplicates:
+        st.warning(f"共有 {len(duplicates)} 人重複填寫表單：")
+        dup_details = [f"{name}（填寫 {count} 次）" for name, count in duplicates.items()]
+        st.write("、".join(dup_details))
+    else:
+        st.success("無重複填寫人員。")
+    # ----------------------------------------------------------------
+
 #-------------------------文字說明------------------------
 st.sidebar.markdown("""
 1. **上傳 CSV 檔案**：將**回報表單**匯出的 `.csv` 檔拖曳至右側區塊。
